@@ -19,6 +19,31 @@ public class Bonus {
 				Scanner scan = new Scanner(System.in);) {
 			
 			
+			System.out.print("Insert a search word: ");
+			String research = scan.nextLine();
+			String queryResearch = "select c.name as Country, c.country_id as Id, r.name as Region, c2.name as Continent\r\n"
+					+ "from countries c \r\n"
+					+ "inner join regions r on r.region_id = c.region_id \r\n"
+					+ "inner join continents c2 on c2.continent_id = r.continent_id \r\n"
+					+ "where c.name like ?\r\n"
+					+ "order by c.name;";
+
+			try(PreparedStatement ps = con.prepareStatement(queryResearch)) {
+				ps.setString(1, "%" + research + "%");
+				
+				try(ResultSet rs = ps.executeQuery()) {
+					System.out.println("Country - Id - Region - Continent");
+					while(rs.next()) {
+						System.out.print(rs.getString(1) + " - ");
+						System.out.print(rs.getInt(2) + " - ");
+						System.out.print(rs.getString(3) + " - ");
+						System.out.println(rs.getString(4));
+					}
+					
+				}
+			}
+			
+			
 			// Bonus
 			System.out.print("Insert a country id: ");
 			int countryId = Integer.parseInt(scan.nextLine());
@@ -49,6 +74,24 @@ public class Bonus {
 					System.out.print("Languages: ");
 					while(rs.next()) {
 						System.out.print(rs.getString(1) + ", ");
+					}
+				}
+			}
+			
+			String queryStats = "select max(cs.`year`) as Latest_year, population, gdp \r\n"
+					+ "from country_stats cs\r\n"
+					+ "where country_id = ?;";
+			
+			try(PreparedStatement ps = con.prepareStatement(queryStats)) {
+				ps.setInt(1, countryId);
+				
+				try(ResultSet rs = ps.executeQuery()) {
+					System.out.println("");
+					System.out.println("Most recent stats");
+					while(rs.next()) {
+						System.out.println("Year: " + rs.getString(1));
+						System.out.println("Population: " + rs.getString(2));
+						System.out.println("GDP: " + rs.getString(3));
 					}
 				}
 			}
