@@ -18,7 +18,7 @@ public class Main {
 		try(Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
 				Scanner scan = new Scanner(System.in);) {
 			
-			System.out.print("Inserisci una stringa da cercare: ");
+			System.out.print("Insert a search word: ");
 			String research = scan.nextLine();
 			String queryResearch = "select c.name as Country, c.country_id as Id, r.name as Region, c2.name as Continent\r\n"
 					+ "from countries c \r\n"
@@ -31,16 +31,18 @@ public class Main {
 				ps.setString(1, "%" + research + "%");
 				
 				try(ResultSet rs = ps.executeQuery()) {
-					
+					System.out.println("Country - Id - Region - Continent");
 					while(rs.next()) {
 						System.out.print(rs.getString(1) + " - ");
-						System.out.print(rs.getString(2) + " - ");
+						System.out.print(rs.getInt(2) + " - ");
 						System.out.print(rs.getString(3) + " - ");
 						System.out.println(rs.getString(4));
 					}
 					
 				}
 			}
+						
+			scan.close();
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
